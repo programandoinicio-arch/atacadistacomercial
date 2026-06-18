@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atacadista Comercial - Login</title>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{
+ margin:0;
+ min-height:100vh;
+ background:#03140d url('login-background.png') center/cover no-repeat;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+}
+body:before{
+ content:"";
+ position:fixed;
+ inset:0;
+ background:rgba(0,20,12,.65);
+}
+.container{
+ position:relative;
+ z-index:1;
+ width:100%;
+ max-width:1450px;
+ min-height:700px;
+ display:flex;
+ align-items:center;
+ justify-content:space-between;
+ padding:50px;
+ color:white;
+}
+.left{
+ width:45%;
+}
+.left h1{
+ font-size:58px;
+ line-height:1.05;
+ margin:0 0 25px;
+}
+.left h1 span{color:#00a651}
+.left p{
+ font-size:22px;
+ line-height:1.5;
+}
+.btn{
+ margin-top:35px;
+ background:#008c45;
+ color:white;
+ padding:18px 35px;
+ border:0;
+ border-radius:8px;
+ font-size:18px;
+}
+.login{
+ background:white;
+ color:#111;
+ width:390px;
+ border-radius:22px;
+ padding:35px;
+ box-shadow:0 20px 50px #0005;
+}
+.logo{
+ text-align:center;
+ font-size:28px;
+ font-weight:bold;
+ color:#006b35;
+ margin-bottom:25px;
+}
+.login h2{
+ font-size:28px;
+ margin-bottom:5px;
+}
+.login p{color:#666}
+label{display:block;margin-top:20px;font-weight:bold}
+input{
+ width:100%;
+ padding:15px;
+ margin-top:8px;
+ border:1px solid #ddd;
+ border-radius:8px;
+ font-size:16px;
+}
+.enter{
+ width:100%;
+ margin-top:25px;
+ padding:16px;
+ border:0;
+ border-radius:8px;
+ background:#007a3d;
+ color:white;
+ font-size:18px;
+}
+.create{
+ width:100%;
+ margin-top:20px;
+ padding:15px;
+ border-radius:8px;
+ border:1px solid #007a3d;
+ background:white;
+ color:#006b35;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="left">
+<h1>As melhores<br>soluções em<br><span>um só lugar!</span></h1>
+<p>Produtos de qualidade, preços imbatíveis<br>
+e o melhor atendimento para o seu negócio crescer.</p>
+<button class="btn">🛍 Ver Produtos</button>
+</div>
+
+<div class="login">
+<div class="logo">▲<br>ATACADISTA<br>COMERCIAL</div>
+<h2>Acesse sua conta</h2>
+<p>Entre para continuar</p>
+
+<label>E-mail</label>
+<input placeholder="Digite seu e-mail">
+
+<label>Senha</label>
+<input type="password" placeholder="Digite sua senha">
+
+<button class="enter">Entrar</button>
+<button class="create">Criar nova conta</button>
+</div>
+</div>
+</body>
+</html>

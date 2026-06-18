@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <base target="_self">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Loja - Catálogo Digital, CRM e Controle de Estoque</title>
+    <meta name="description" content="Loja completa com catálogo digital, CRM integrado, controle de estoque e painel administrativo">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3B82F6",
+                        secondary: "#10B981",
+                        accent: "#8B5CF6",
+                        dark: "#1F2937",
+                        light: "#F9FAFB"
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif']
+                    },
+                    spacing: {
+                        '128': '32rem',
+                        '144': '36rem'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body class="font-sans bg-gray-50 min-h-screen">
+    <!-- Header/Navigation -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-store text-primary text-2xl"></i>
+                    <h1 class="text-2xl font-bold text-gray-800">Minha Loja</h1>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6" id="main-nav">
+                    <!-- Navigation will be rendered here -->
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button id="cart-btn" class="relative p-2 hover:bg-gray-100 rounded-full">
+                        <i class="fas fa-shopping-cart text-gray-700"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                    </button>
+                    <button id="user-menu-btn" class="flex items-center space-x-2 p-2 hover:bg-gray-100 rounded-lg">
+                        <i class="fas fa-user-circle text-gray-700"></i>
+                        <span class="hidden md:inline">Minha Conta</span>
+                    </button>
+                    <button id="admin-toggle" class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+                        <i class="fas fa-cogs mr-2"></i>Painel Admin
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 py-8">
+        <!-- Dashboard Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" id="stats-cards">
+            <!-- Stats will be rendered here -->
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Product Catalog -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold text-gray-800">
+                            <i class="fas fa-boxes mr-3 text-primary"></i>Catálogo de Produtos
+                        </h2>
+                        <div class="flex space-x-2">
+                            <input type="text" id="search-products" placeholder="Buscar produtos..." class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                            <button id="filter-btn" class="px-4 py-2 border rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-filter"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="product-grid">
+                        <!-- Products will be rendered here -->
+                    </div>
+                    
+                    <div class="mt-8 flex justify-center">
+                        <button id="load-more" class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium">
+                            Carregar Mais Produtos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CRM Section -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-users mr-3 text-secondary"></i>CRM - Gestão de Clientes
+                    </h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr id="crm-table-header">
+                                    <!-- Table headers will be rendered here -->
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="crm-table-body">
+                                <!-- CRM data will be rendered here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Admin Panel & Inventory -->
+            <div class="space-y-6">
+                <!-- Admin Quick Actions -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-tachometer-alt mr-3 text-accent"></i>Painel Administrativo
+                    </h2>
+                    
+                    <div class="grid grid-cols-2 gap-4" id="admin-actions">
+                        <!-- Admin actions will be rendered here -->
+                    </div>
+                    
+                    <div class="mt-6">
+                        <h3 class="font-semibold text-gray-700 mb-3">Acesso Rápido</h3>
+                        <div class="space-y-2" id="quick-access">
+                            <!-- Quick access links will be rendered here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inventory Control -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        <i class="fas fa-clipboard-list mr-3 text-green-500"></i>Controle de Estoque
+                    </h2>
+                    
+                    <div class="space-y-4" id="inventory-list">
+                        <!-- Inventory items will be rendered here -->
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t">
+                        <button id="add-inventory" class="w-full py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                            <i class="fas fa-plus mr-2"></i>Adicionar Novo Item
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Recent Orders -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Pedidos Recentes</h2>
+                    <div class="space-y-3" id="recent-orders">
+                        <!-- Recent orders will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white mt-12">
+        <div class="container mx-auto px-4 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Minha Loja</h3>
+                    <p class="text-gray-300">Sistema completo de e-commerce com CRM integrado e controle de estoque.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Links Rápidos</h4>
+                    <ul class="space-y-2" id="footer-links">
+                        <!-- Footer links will be rendered here -->
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Contato</h4>
+                    <div class="space-y-2">
+                        <p><i class="fas fa-phone mr-2"></i>(11) 99999-9999</p>
+                        <p><i class="fas fa-envelope mr-2"></i>contato@minhaloja.com</p>
+                        <p><i class="fas fa-map-marker-alt mr-2"></i>São Paulo, SP</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-gray-700 text-center text-gray-400">
+                <p>&copy; 2024 Minha Loja. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="product-modal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Detalhes do Produto</h3>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div id="modal-content">
+                    <!-- Modal content will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-modal" class="modal">
+        <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full mx-4">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-bold text-gray-800">Painel Administrativo</h3>
+                    <button id="close-admin-modal" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                </div>
+                <div id="admin-modal-content">
+                    <!-- Admin modal content will be rendered here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== DATA LAYER ==========
+        const navigationItems = [
+            { "label": "Início", "href": "#home", "icon": "fas fa-home" },
+            { "label": "Catálogo", "href": "#catalog", "icon": "fas fa-boxes" },
+            { "label": "Clientes", "href": "#crm", "icon": "fas fa-users" },
+            { "label": "Estoque", "href": "#inventory", "icon": "fas fa-warehouse" },
+            { "label": "Vendas", "href": "#sales", "icon": "fas fa-chart-line" }
+        ];
+
+        const statsData = [
+            { "title": "Total de Vendas", "value": "R$ 24.580", "change": "+12%", "icon": "fas fa-shopping-cart", "color": "bg-blue-100 text-blue-600" },
+            { "title": "Clientes Ativos", "value": "1.248", "change": "+8%", "icon": "fas fa-user-friends", "color": "bg-green-100 text-green-600" },
+            { "title": "Produtos em Estoque", "value": "856", "change": "-3%", "icon": "fas fa-box", "color": "bg-purple-100 text-purple-600" },
+            { "title": "Pedidos Hoje", "value": "42", "change": "+23%", "icon": "fas fa-clipboard-list", "color": "bg-orange-100 text-orange-600" }
+        ];
+
+        const products = [
+            { 
+                "id": 1, 
+                "name": "Smartphone Premium", 
+                "price": 1899.90, 
+                "category": "Eletrônicos", 
+                "stock": 45, 
+                "rating": 4.8,
+                "image": "https://picsum.photos/400/300?random=1",
+                "description": "Smartphone com tela AMOLED, 128GB de armazenamento e câmera tripla."
+            },
+            { 
+                "id": 2, 
+                "name": "Notebook Profissional", 
+                "price": 3499.90, 
+                "category": "Informática", 
+                "stock": 22, 
+                "rating": 4.9,
+                "image": "https://picsum.photos/400/300?random=2",
+                "description": "Notebook com processador i7, 16GB RAM e SSD 512GB."
+            },
+            { 
+                "id": 3, 
+                "name": "Fone Bluetooth", 
+                "price": 299.90, 
+                "category": "Áudio", 
+                "stock": 78, 
+                "rating": 4.5,
+                "image": "https://picsum.photos/400/300?random=3",
+                "description": "Fone sem fio com cancelamento de ruído e 30h de bateria."
+            },
+            { 
+                "id": 4, 
+                "name": "Smartwatch", 
+                "price": 799.90, 
+                "category": "Wearables", 
+                "stock": 33, 
+                "rating": 4.7,
+                "image": "https://picsum.photos/400/300?random=4",
+                "description": "Relógio inteligente com monitor cardíaco e GPS integrado."
+            },
+            { 
+                "id": 5, 
+                "name": "Câmera DSLR", 
+                "price": 2599.90, 
+                "category": "Fotografia", 
+                "stock": 15, 
+                "rating": 4.9,
+                "image": "https://picsum.photos/400/300?random=5",
+                "description": "Câmera profissional com sensor full-frame e kit de lentes."
+            },
+            { 
+                "id": 6, 
+                "name": "Tablet 10\"", 
+                "price": 1299.90, 
+                "category": "Tablets", 
+                "stock": 41, 
+                "rating": 4.6,
+                "image": "https://picsum.photos/400/300?random=6",
+                "description": "Tablet com tela retina, 64GB e caneta stylus inclusa."
+            }
+        ];
+
+        const crmData = [
+            { "id": 1, "name": "João Silva", "email": "joao@email.com", "phone": "(11) 99999-8888", "orders": 12, "total": "R$ 4.580", "status": "Ativo" },
+            { "id": 2, "name": "Maria Santos", "email": "maria@email.com", "phone": "(11) 98888-7777", "orders": 8, "total": "R$ 2.990", "status": "Ativo" },
+            { "id": 3, "name": "Carlos Oliveira", "email": "carlos@email.com", "phone": "(11) 97777-6666", "orders": 5, "total": "R$ 1.750", "status": "Inativo" },
+            { "id": 4, "name": "Ana Costa", "email": "ana@email.com", "phone": "(11) 96666-5555", "orders": 15, "total": "R$ 6.320", "status": "Ativo" },
+            { "id": 5, "name": "Pedro Almeida", "email": "pedro@email.com", "phone": "(11) 95555-4444", "orders": 3, "total": "R$ 890", "status": "Novo" }
+        ];
+
+        const adminActions = [
+            { "title": "Adicionar Produto", "icon": "fas fa-plus-circle", "action": "addProduct", "color": "bg-blue-500" },
+            { "title": "Gerenciar Usuários", "icon": "fas fa-user-cog", "action": "manageUsers", "color": "bg-green-500" },
+            { "title": "Relatórios", "icon": "fas fa-chart-bar", "action": "reports", "color": "bg-purple-500" },
+            { "title": "Configurações", "icon": "fas fa-cogs", "action": "settings", "color": "bg-yellow-500" }
+        ];
+
+        const quickAccessLinks = [
+            { "label": "Dashboard de Vendas", "href": "#sales-dashboard", "icon": "fas fa-chart-line" },
+            { "label": "Controle de Estoque", "href": "#inventory-control", "icon": "fas fa-boxes" },
+            { "label": "Gestão de Clientes", "href": "#customer-management", "icon": "fas fa-users" },
+            { "label": "Configurações da Loja", "href": "#store-settings", "icon": "fas fa-store" }
+        ];
+
+        const inventoryItems = [
+            { "id": 1, "product": "Smartphone Premium", "stock": 45, "min": 10, "status": "Em estoque", "alert": false },
+            { "id": 2, "product": "Notebook Profissional", "stock": 22, "min": 5, "status": "Em estoque", "alert": false },
+            { "id": 3, "product": "Fone Bluetooth", "stock": 78, "min": 20, "status": "Em estoque", "alert": false },
+            { "id": 4, "product": "Smartwatch", "stock": 33, "min": 15, "status": "Em estoque", "alert": false },
+            { "id": 5, "product": "Câmera DSLR", "stock": 15, "min": 5, "status": "Baixo estoque", "alert": true }
+        ];
+
+        const recentOrders = [
+            { "id": "#ORD001", "customer": "João Silva", "amount": "R$ 899,90", "status": "Entregue", "date": "10/12/2024" },
+            { "id": "#ORD002", "customer": "Maria Santos", "amount": "R$ 1.299,90", "status": "Processando", "date": "09/12/2024" },
+            { "id": "#ORD003", "customer": "Carlos Oliveira", "amount": "R$ 549,90", "status": "Enviado", "date": "08/12/2024" }
+        ];
+
+        const footerLinks = [
+            { "label": "Sobre Nós", "href": "#about" },
+            { "label": "Política de Privacidade", "href": "#privacy" },
+            { "label": "Termos de Uso", "href": "#terms" },
+            { "label": "Contato", "href": "#contact" },
+            { "label": "FAQ", "href": "#faq" },
+            { "label": "Suporte", "href": "#support" }
+        ];
+
+        // ========== RENDER FUNCTIONS ==========
+        function renderNavigation(items) {
+            return items.map(item => `
+                <a href="${item.href}" class="flex items-center space-x-2 text-gray-600 hover:text-primary font-medium">
+                    <i class="${item.icon}"></i>
+                    <span>${item.label}</span>
+                </a>
+            `).join("");
+        }
+
+        function renderStatsCards(items) {
+            return items.map(stat => `
+                <div class="bg-white rounded-xl shadow-lg p-6 card-hover">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-500 text-sm">${stat.title}</p>
+                            <p class="text-3xl font-bold text-gray-800 mt-2">${stat.value}</p>
+                            <p class="text-sm mt-2 ${stat.change.startsWith('+') ? 'text-green-600' : 'text-red-600'}">
+                                ${stat.change} este mês
+                            </p>
+                        </div>
+                        <div class="${stat.color} p-3 rounded-lg">
+                            <i class="${stat.icon} text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderProducts(items) {
+            return items.map(product => `
+                <div class="bg-white border rounded-xl overflow-hidden card-hover">
+                    <div class="relative">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover" loading="lazy">
+                        <div class="absolute top-3 right-3 bg-primary text-white px-2 py-1 rounded text-sm">
+                            ${product.category}
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg text-gray-800 mb-2">${product.name}</h3>
+                        <p class="text-gray-600 text-sm mb-3 line-clamp-2">${product.description}</p>
+                        
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center">
+                                <i class="fas fa-star text-yellow-400 mr-1"></i>
+                                <span class="font-medium">${product.rating}</span>
+                            </div>
+                            <span class="text-sm ${product.stock < 20 ? 'text-red-600' : 'text-green-600'}">
+                                ${product.stock} em estoque
+                            </span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-2xl font-bold text-gray-800">R$ ${product.price.toFixed(2)}</span>
+                            <div class="flex space-x-2">
+                                <button class="p-2 text-gray-600 hover:text-primary" onclick="viewProduct(${product.id})">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="p-2 text-gray-600 hover:text-green-600" onclick="addToCart(${product.id})">
+                                    <i class="fas fa-cart-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderCRMTable(items) {
+            const headers = ["Nome", "Email", "Telefone", "Pedidos", "Total", "Status", "Ações"];
+            const headerHTML = headers.map(header => `<th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">${header}</th>`).join("");
+            
+            const bodyHTML = items.map(client => `
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0 h-10 w-10">
+                                <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <div class="text-sm font-medium text-gray-900">${client.name}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${client.email}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${client.phone}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${client.orders}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${client.total}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                            ${client.status === 'Ativo' ? 'bg-green-100 text-green-800' : 
+                              client.status === 'Inativo' ? 'bg-red-100 text-red-800' : 
+                              'bg-yellow-100 text-yellow-800'}">
+                            ${client.status}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <button class="text-primary hover:text-blue-700 mr-3" onclick="editClient(${client.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="text-red-600 hover:text-red-900" onclick="deleteClient(${client.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+            
+            return { headerHTML, bodyHTML };
+        }
+
+        function renderAdminActions(items) {
+            return items.map(action => `
+                <button onclick="${action.action}()" class="flex flex-col items-center justify-center p-4 rounded-lg ${action.color} text-white hover:opacity-90 transition">
+                    <i class="${action.icon} text-2xl mb-2"></i>
+                    <span class="text-sm font-medium">${action.title}</span>
+                </button>
+            `).join("");
+        }
+
+        function renderQuickAccess(items) {
+            return items.map(link => `
+                <a href="${link.href}" class="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg transition">
+                    <i class="${link.icon} text-gray-500"></i>
+                    <span class="text-gray-700">${link.label}</span>
+                </a>
+            `).join("");
+        }
+
+        function renderInventory(items) {
+            return items.map(item => `
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                        <h4 class="font-medium text-gray-800">${item.product}</h4>
+                        <div class="flex items-center space-x-4 mt-1">
+                            <span class="text-sm text-gray-600">Estoque: <strong>${item.stock}</strong></span>
+                            <span class="text-sm text-gray-600">Mínimo: ${item.min}</span>
+                            ${item.alert ? '<span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded">Alerta</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="p-1 text-blue-600 hover:text-blue-800" onclick="adjustStock(${item.id}, 'add')">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button class="p-1 text-red-600 hover:text-red-800" onclick="adjustStock(${item.id}, 'remove')">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderRecentOrders(items) {
+            return items.map(order => `
+                <div class="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                        <h4 class="font-medium text-gray-800">${order.id}</h4>
+                        <p class="text-sm text-gray-600">${order.customer}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-gray-800">${order.amount}</p>
+                        <span class="text-xs px-2 py-1 rounded ${order.status === 'Entregue' ? 'bg-green-100 text-green-800' : 
+                            order.status === 'Processando' ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'}">
+                            ${order.status}
+                        </span>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderFooterLinks(items) {
+            return items.map(link => `
+                <li>
+                    <a href="${link.href}" class="text-gray-300 hover:text-white transition">
+                        ${link.label}
+                    </a>
+                </li>
+            `).join("");
+        }
+
+        // ========== INITIAL RENDERING ==========
+        document.addEventListener("DOMContentLoaded", function() {
+            // Render navigation
+            document.getElementById("main-nav").innerHTML = renderNavigation(navigationItems);
+            
+            // Render stats cards
+            document.getElementById("stats-cards").innerHTML = renderStatsCards(statsData);
+            
+            // Render products
+            document.getElementById("product-grid").innerHTML = renderProducts(products);
+            
+            // Render CRM table
+            const crmTable = renderCRMTable(crmData);
+            document.getElementById("crm-table-header").innerHTML = crmTable.headerHTML;
+            document.getElementById("crm-table-body").innerHTML = crmTable.bodyHTML;
+            
+            // Render admin actions
+            document.getElementById("admin-actions").innerHTML = renderAdminActions(adminActions);
+            
+            // Render quick access
+            document.getElementById("quick-access").innerHTML = renderQuickAccess(quickAccessLinks);
+            
+            // Render inventory
+            document.getElementById("inventory-list").innerHTML = renderInventory(inventoryItems);
+            
+            // Render recent orders
+            document.getElementById("recent-orders").innerHTML = renderRecentOrders(recentOrders);
+            
+            // Render footer links
+            document.getElementById("footer-links").innerHTML = renderFooterLinks(footerLinks);
+            
+            // Initialize event listeners
+            initializeEventListeners();
+        });
+
+        // ========== EVENT HANDLERS ==========
+        function initializeEventListeners() {
+            // Modal controls
+            document.getElementById("close-modal").addEventListener("click", () => {
+                document.getElementById("product-modal").classList.remove("active");
+            });
+            
+            document.getElementById("close-admin-modal").addEventListener("click", () => {
+                document.getElementById("admin-modal").classList.remove("active");
+            });
+            
+            // Close modal when clicking outside
+            document.querySelectorAll(".modal").forEach(modal => {
+                modal.addEventListener("click", (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove("active");
+                    }
+                });
+            });
+            
+            // Admin panel toggle
+            document.getElementById("admin-toggle").addEventListener("click", () => {
+                showAdminPanel();
+            });
+            
+            // Cart button
+            document.getElementById("cart-btn").addEventListener("click", () => {
+                alert("Carrinho de compras - Em desenvolvimento");
+            });
+            
+            // User menu
+            document.getElementById("user-menu-btn").addEventListener("click", () => {
+                alert("Menu do usuário - Em desenvolvimento");
+            });
+            
+            // Search functionality
+            document.getElementById("search-products").addEventListener("input", function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filteredProducts = products.filter(product => 
+                    product.name.toLowerCase().includes(searchTerm) ||
+                    product.category.toLowerCase().includes(searchTerm) ||
+                    product.description.toLowerCase().includes(searchTerm)
+                );
+                document.getElementById("product-grid").innerHTML = renderProducts(filteredProducts);
+            });
+            
+            // Load more products
+            document.getElementById("load-more").addEventListener("click", function() {
+                alert("Carregando mais produtos...");
+                // In a real implementation, this would fetch more products from an API
+            });
+            
+            // Add inventory item
+            document.getElementById("add-inventory").addEventListener("click", function() {
+                alert("Adicionar novo item ao estoque - Em desenvolvimento");
+            });
+        }
+
+        // ========== BUSINESS LOGIC FUNCTIONS ==========
+        function viewProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            const modalContent = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <img src="${product.image}" alt="${product.name}" class="w-full rounded-lg">
+                    </div>
+                    <div>
+                        <h4 class="text-2xl font-bold text-gray-800 mb-2">${product.name}</h4>
+                        <p class="text-gray-600 mb-4">${product.description}</p>
+                        
+                        <div class="space-y-3 mb-6">
+                            <div class="flex items-center">
+                                <span class="font-medium w-32">Categoria:</span>
+                                <span class="text-gray-700">${product.category}</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-medium w-32">Estoque:</span>
+                                <span class="text-gray-700">${product.stock} unidades</span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="font-medium w-32">Avaliação:</span>
+                                <span class="text-gray-700">${product.rating}/5.0</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <span class="text-3xl font-bold text-primary">R$ ${product.price.toFixed(2)}</span>
+                            <button onclick="addToCart(${product.id})" class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition">
+                                <i class="fas fa-cart-plus mr-2"></i>Adicionar ao Carrinho
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById("modal-content").innerHTML = modalContent;
+            document.getElementById("product-modal").classList.add("active");
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+            
+            // Update cart count
+            const cartCount = document.getElementById("cart-count");
+            let count = parseInt(cartCount.textContent) || 0;
+            cartCount.textContent = count + 1;
+            
+            // Show notification
+            showNotification(`"${product.name}" adicionado ao carrinho!`, "success");
+        }
+
+        function showAdminPanel() {
+            const adminContent = `
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-gray-800 mb-2">Acesso Total</h4>
+                            <p class="text-sm text-gray-600">Você tem acesso completo a todas as funcionalidades do sistema.</p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h4 class="font-bold text-gray-800 mb-2">Último Acesso</h4>
+                            <p class="text-sm text-gray-600">Hoje às ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3">Configurações Rápidas</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span>Manutenção do Site</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span>Notificações por Email</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-gray-800 mb-3">Exportar Dados</h4>
+                        <div class="flex space-x-3">
+                            <button class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200">
+                                <i class="fas fa-file-excel mr-2"></i>Exportar Excel
+                            </button>
+                            <button class="px-4 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200">
+                                <i class="fas fa-file-pdf mr-2"></i>Exportar PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById("admin-modal-content").innerHTML = adminContent;
+            document.getElementById("admin-modal").classList.add("active");
+        }
+
+        // Admin action functions
+        function addProduct() {
+            alert("Adicionar novo produto - Em desenvolvimento");
+        }
+
+        function manageUsers() {
+            alert("Gerenciar usuários - Em desenvolvimento");
+        }
+
+        function reports() {
+            alert("Gerar relatórios - Em desenvolvimento");
+        }
+
+        function settings() {
+            alert("Configurações do sistema - Em desenvolvimento");
+        }
+
+        // CRM functions
+        function editClient(clientId) {
+            alert(`Editar cliente ID: ${clientId} - Em desenvolvimento`);
+        }
+
+        function deleteClient(clientId) {
+            if (confirm("Tem certeza que deseja excluir este cliente?")) {
+                showNotification("Cliente excluído com sucesso!", "success");
+            }
+        }
+
+        // Inventory functions
+        function adjustStock(itemId, action) {
+            const item = inventoryItems.find(i => i.id === itemId);
+            if (!item) return;
+            
+            if (action === 'add') {
+                item.stock += 1;
+            } else if (action === 'remove' && item.stock > 0) {
+                item.stock -= 1;
+            }
+            
+            // Update inventory display
+            document.getElementById("inventory-list").innerHTML = renderInventory(inventoryItems);
+            showNotification(`Estoque ajustado para ${item.product}`, "info");
+        }
+
+        // Utility functions
+        function showNotification(message, type = "info") {
+            // Create notification element
+            const notification = document.createElement("div");
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg text-white z-50 transform transition-transform duration-300 ${
+                type === "success" ? "bg-green-500" :
+                type === "error" ? "bg-red-500" :
+                "bg-blue-500"
+            }`;
+            notification.textContent = message;
+            
+            // Add to DOM
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = "translateX(100%)";
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Prevent default anchor behavior and handle smooth scrolling
+        document.addEventListener("click", function(event) {
+            const anchor = event.target.closest("a[href^='#']");
+            if (!anchor) return;
+            
+            event.preventDefault();
+            const targetId = anchor.getAttribute("href");
+            if (targetId === "#") return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            }
+        });
+    </script>
+
+<!-- Módulo Cliente / Compras v2 -->
+<div id="customer-panel" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+<div class="bg-white rounded-xl p-6 w-full max-w-lg">
+<h2 class="text-2xl font-bold mb-4">Área do Cliente</h2>
+<div id="customer-content"></div>
+</div>
+</div>
+
+<script>
+(function(){
+const Store = {
+ get(k,d){ return JSON.parse(localStorage.getItem(k)||JSON.stringify(d)); },
+ set(k,v){ localStorage.setItem(k,JSON.stringify(v)); }
+};
+
+window.lojaClientes = Store.get("clientes",[]);
+window.lojaPedidos = Store.get("pedidos",[]);
+window.lojaCarrinho = Store.get("carrinho",[]);
+window.usuarioAtual = Store.get("usuarioAtual",null);
+
+function salvar(){
+ Store.set("clientes",window.lojaClientes);
+ Store.set("pedidos",window.lojaPedidos);
+ Store.set("carrinho",window.lojaCarrinho);
+ Store.set("usuarioAtual",window.usuarioAtual);
+}
+
+window.cadastrarCliente = function(dados){
+ if(lojaClientes.some(c=>c.email===dados.email)) return false;
+ lojaClientes.push({...dados,id:Date.now(),pedidos:[]});
+ salvar();
+ return true;
+}
+
+window.loginCliente = function(email,senha){
+ let u=lojaClientes.find(c=>c.email===email && c.senha===senha);
+ if(u){usuarioAtual=u; salvar(); return true;}
+ return false;
+}
+
+window.adicionarCompraCarrinho = function(id){
+ let p=products.find(x=>x.id===id);
+ if(!p || p.stock<=0) return;
+ let item=lojaCarrinho.find(x=>x.id===id);
+ if(item){
+   if(item.quantidade < p.stock) item.quantidade++;
+ }else{
+   lojaCarrinho.push({id:id,quantidade:1});
+ }
+ salvar();
+ showNotification("Produto adicionado ao carrinho","success");
+}
+
+window.finalizarCompraCliente = function(){
+ if(!usuarioAtual){
+   alert("Faça login antes de comprar.");
+   return;
+ }
+ let total=0;
+ lojaCarrinho.forEach(i=>{
+   let p=products.find(x=>x.id===i.id);
+   if(p){ p.stock-=i.quantidade; total+=p.price*i.quantidade; }
+ });
+ let pedido={
+   id:"PED-"+Date.now(),
+   cliente:usuarioAtual.nome,
+   itens:[...lojaCarrinho],
+   total:total,
+   status:"Recebido",
+   data:new Date().toLocaleString()
+ };
+ lojaPedidos.push(pedido);
+ usuarioAtual.pedidos.push(pedido);
+ lojaCarrinho=[];
+ salvar();
+ alert("Pedido criado com sucesso!");
+ location.reload();
+}
+
+window.abrirCadastroCliente=function(){
+ document.getElementById("customer-panel").classList.remove("hidden");
+ document.getElementById("customer-content").innerHTML=`
+ <input id="cnome" class="border p-2 w-full mb-2" placeholder="Nome">
+ <input id="cemail" class="border p-2 w-full mb-2" placeholder="Email">
+ <input id="csenha" class="border p-2 w-full mb-2" placeholder="Senha" type="password">
+ <button class="bg-blue-500 text-white px-4 py-2 rounded" onclick="
+ cadastrarCliente({nome:cnome.value,email:cemail.value,senha:csenha.value});
+ alert('Cadastro realizado');
+ ">Cadastrar</button>`;
+}
+})();
+</script>
+
+
+<!-- Login Atacadista Integrado -->
+<div id="login-screen" style="display:none;position:fixed;inset:0;z-index:9999;background:#fff;">
+<iframe src="login.html" style="width:100%;height:100%;border:0;"></iframe>
+</div>
+
+<script>
+function abrirLogin(){
+ document.getElementById("login-screen").style.display="block";
+}
+function fecharLogin(){
+ document.getElementById("login-screen").style.display="none";
+}
+</script>
+
+<script>
+const usuariosPadrao = [
+ {email:"admin@atacadista.com", senha:"123456", tipo:"admin", nome:"Administrador"}
+];
+
+function autenticarUsuario(email, senha){
+ let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+ let todos = [...usuariosPadrao, ...clientes];
+
+ let usuario = todos.find(
+   u => u.email === email && u.senha === senha
+ );
+
+ if(usuario){
+   localStorage.setItem("usuarioAtual", JSON.stringify(usuario));
+
+   if(usuario.tipo === "admin"){
+      localStorage.setItem("perfil","admin");
+      window.location.href="index.html";
+   }else{
+      localStorage.setItem("perfil","cliente");
+      window.location.href="index.html";
+   }
+   return true;
+ }
+
+ alert("E-mail ou senha inválidos");
+ return false;
+}
+
+function criarContaCliente(dados){
+ let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+
+ if(clientes.some(c=>c.email===dados.email)){
+   alert("Este e-mail já possui cadastro");
+   return;
+ }
+
+ dados.tipo="cliente";
+ clientes.push(dados);
+
+ localStorage.setItem("clientes",JSON.stringify(clientes));
+
+ alert("Cadastro criado com sucesso");
+}
+</script>
+
+</body>
+</html>
